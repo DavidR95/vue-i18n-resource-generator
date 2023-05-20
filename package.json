@@ -12,6 +12,7 @@
   "type": "module",
   "devDependencies": {
     "commander": "^10.0.1",
+    "gpt-3-encoder": "^1.1.4",
     "openai": "^3.2.1"
   }
 }
