@@ -11,6 +11,7 @@
   "license": "ISC",
   "type": "module",
   "devDependencies": {
+    "commander": "^10.0.1",
     "openai": "^3.2.1"
   }
 }
