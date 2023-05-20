@@ -14,5 +14,8 @@
     "commander": "^10.0.1",
     "gpt-3-encoder": "^1.1.4",
     "openai": "^3.2.1"
+  },
+  "dependencies": {
+    "partial-json-parser": "^1.2.2"
   }
 }

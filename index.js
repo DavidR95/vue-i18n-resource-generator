@@ -2,6 +2,7 @@ import { Configuration, OpenAIApi } from "openai";
 import { program } from 'commander';
 import fs from 'fs/promises';
 import { encode } from 'gpt-3-encoder';
+import partialJSONParse from 'partial-json-parser';
 
 // The logrocket blog had article on CLI colours - or maybe commander can do it?
 
@@ -46,10 +47,12 @@ const jsonDataHalf1 = Object.fromEntries(arrayDataHalf1);
 
 const jsonDataHalf1TokenLength = encode(JSON.stringify(jsonDataHalf1)).length;
 
-const newPrompt = `Translate the values in the following JSON in to the following locales: 'de-DE', 'it-IT', 'pt-PT'. Translation must adhere to the Vue I18n message syntax.
-${JSON.stringify(jsonDataHalf1)}`;
+const newPrompt = `Translate the values in the following JSON in to the following locales: 'de-DE', 'it-IT', 'pt-PT'. The following rules must be followed:
+- Translation must adhere to the Vue I18n message syntax.
+- The response should be JSON where each locale is a root key.
+- Stop translating if the response would result in unterminated JSON. 
 
-console.log(newPrompt);
+${JSON.stringify(jsonDataHalf1)}`;
 
 const completion = await openai.createCompletion({
     model: "text-davinci-003",
@@ -63,3 +66,6 @@ const choice = completion.data.choices[0];
 if (choice.finish_reason === 'length') {
 
 }
+
+console.log(choice.text);
+console.log(partialJSONParse(choice.text));
