@@ -9,7 +9,8 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
+  "type": "module",
+  "devDependencies": {
     "openai": "^3.2.1"
   }
 }
