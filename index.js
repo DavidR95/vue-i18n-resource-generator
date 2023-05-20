@@ -46,13 +46,20 @@ const jsonDataHalf1 = Object.fromEntries(arrayDataHalf1);
 
 const jsonDataHalf1TokenLength = encode(JSON.stringify(jsonDataHalf1)).length;
 
-console.log(jsonDataHalf1);
+const newPrompt = `Translate the values in the following JSON in to the following locales: 'de-DE', 'it-IT', 'pt-PT'. Translation must adhere to the Vue I18n message syntax.
+${JSON.stringify(jsonDataHalf1)}`;
 
-// const completion = await openai.createCompletion({
-//     model: "text-davinci-003",
-//     prompt,
-//     temperature: 0,
-//     max_tokens: 100,
-//   });
+console.log(newPrompt);
 
-// console.log(completion.data.choices[0].text);
+const completion = await openai.createCompletion({
+    model: "text-davinci-003",
+    prompt: newPrompt,
+    temperature: 0,
+    max_tokens: 100,
+  });
+
+const choice = completion.data.choices[0];
+
+if (choice.finish_reason === 'length') {
+
+}
