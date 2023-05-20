@@ -14,4 +14,10 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-console.log('hello world');
+const completion = await openai.createCompletion({
+    model: "text-davinci-003",
+    prompt: 'say hello world',
+    temperature: 0,
+  });
+
+console.log(completion.data.choices[0].text);
