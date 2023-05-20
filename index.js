@@ -64,8 +64,10 @@ const completion = await openai.createCompletion({
 const choice = completion.data.choices[0];
 
 if (choice.finish_reason === 'length') {
-
+    const responseJSON = partialJSONParse(choice.text);
+    
+    for (const [locale, messages] of Object.entries(responseJSON)) {
+        const messageKeys = Object.keys(messages);
+        // diff the keys against the ones provided (for each locale). And check if locale totally missing
+    }
 }
-
-console.log(choice.text);
-console.log(partialJSONParse(choice.text));
