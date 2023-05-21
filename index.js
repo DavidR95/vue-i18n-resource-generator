@@ -3,6 +3,7 @@ import { program } from 'commander';
 import fs from 'fs/promises';
 import { encode } from 'gpt-3-encoder';
 import partialJSONParse from 'partial-json-parser';
+import _ from 'lodash'
 
 // The logrocket blog had article on CLI colours - or maybe commander can do it?
 
@@ -71,12 +72,12 @@ const choice = completion.data.choices[0];
 
 if (choice.finish_reason === 'length') {
     const responseJSON = partialJSONParse(choice.text);
-    
+    console.log(responseJSON);
     for (const [translatedLocale, messages] of Object.entries(responseJSON)) {
         const messageKeys = Object.keys(messages);
         
         for (const locale of locales) {
-            
+            const missingMessageKeys = _.difference(Object.keys(jsonData), messageKeys)
         }
         // diff the keys against the ones provided (for each locale). And check if locale totally missing
     }
