@@ -72,11 +72,20 @@ const choice = completion.data.choices[0];
 
 const finishedLocales = [];
 const missingMessagesPerLocale = {};
+const translatedMessagesPerLocale = {};
 
 if (choice.finish_reason === 'length') {
     const responseJSON = partialJSONParse(choice.text);
 
     for (const [translatedLocale, messages] of Object.entries(responseJSON)) {
+        for (const [key, value] of Object.entries(messages)) {
+            if (!translatedMessagesPerLocale[translatedLocale]) {
+                translatedMessagesPerLocale[translatedLocale] = {}
+            }
+
+            translatedMessagesPerLocale[translatedLocale][key] = value;
+        }
+
         const messageKeys = Object.keys(messages);
         
         for (const locale of locales) {
@@ -100,11 +109,8 @@ if (choice.finish_reason === 'length') {
             return jsonToSend;
         }, {});
 
-        console.log(jsonToSend);
-
         const perLocalePrompt = `Translate the values in the following JSON in to the following locale: ${locale}. The following rules must be followed:
         - Translation must adhere to the Vue I18n message syntax.
-        - The response should be JSON where each locale is a root key.
         
         ${JSON.stringify(jsonToSend)}`;
 
@@ -114,6 +120,19 @@ if (choice.finish_reason === 'length') {
             temperature: 0,
             max_tokens: 100,
           });
-        
+
+          const choice = completion.data.choices[0];
+
+          const responseJSON = partialJSONParse(choice.text);
+
+          for (const [key, value] of Object.entries(responseJSON)) {
+            if (!translatedMessagesPerLocale[locale]) {
+                translatedMessagesPerLocale[locale] = {}
+            }
+
+            translatedMessagesPerLocale[locale][key] = value;
+        }
     }
 }
+
+console.log(translatedMessagesPerLocale);
