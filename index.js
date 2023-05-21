@@ -72,9 +72,12 @@ const choice = completion.data.choices[0];
 if (choice.finish_reason === 'length') {
     const responseJSON = partialJSONParse(choice.text);
     
-    for (const [locale, messages] of Object.entries(responseJSON)) {
+    for (const [translatedLocale, messages] of Object.entries(responseJSON)) {
         const messageKeys = Object.keys(messages);
-        console.log(locale);
+        
+        for (const locale of locales) {
+            
+        }
         // diff the keys against the ones provided (for each locale). And check if locale totally missing
     }
 }

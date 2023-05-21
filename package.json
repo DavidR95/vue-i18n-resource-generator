@@ -16,6 +16,7 @@
     "openai": "^3.2.1"
   },
   "dependencies": {
+    "lodash": "^4.17.21",
     "partial-json-parser": "^1.2.2"
   }
 }
