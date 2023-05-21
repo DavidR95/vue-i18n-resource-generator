@@ -136,3 +136,12 @@ if (choice.finish_reason === 'length') {
 }
 
 console.log(translatedMessagesPerLocale);
+
+for (const [locale, translations] of Object.entries(translatedMessagesPerLocale)) {
+    fs.writeFile(`${locale}.json`,  JSON.stringify(translations, null, 2), err => {
+        if (err) {
+          console.error(err);
+        }
+        // file written successfully
+      });    
+}
