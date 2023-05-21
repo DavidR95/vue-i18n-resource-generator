@@ -70,6 +70,9 @@ const completion = await openai.createCompletion({
 
 const choice = completion.data.choices[0];
 
+const finishedLocales = [];
+const missingMessagesPerLocale = {};
+
 if (choice.finish_reason === 'length') {
     const responseJSON = partialJSONParse(choice.text);
     console.log(responseJSON);
@@ -77,8 +80,14 @@ if (choice.finish_reason === 'length') {
         const messageKeys = Object.keys(messages);
         
         for (const locale of locales) {
-            const missingMessageKeys = _.difference(Object.keys(jsonData), messageKeys)
+            if (locale === translatedLocale) {
+                const missingMessageKeys = _.difference(Object.keys(jsonData), messageKeys);
+                if (missingMessageKeys === []) {
+                    finishedLocales.push(locale);
+                } else {
+                    missingMessagesPerLocale[locale] = missingMessageKeys;
+                }
+            }
         }
-        // diff the keys against the ones provided (for each locale). And check if locale totally missing
     }
 }
