@@ -75,7 +75,7 @@ const missingMessagesPerLocale = {};
 
 if (choice.finish_reason === 'length') {
     const responseJSON = partialJSONParse(choice.text);
-    console.log(responseJSON);
+
     for (const [translatedLocale, messages] of Object.entries(responseJSON)) {
         const messageKeys = Object.keys(messages);
         
@@ -89,5 +89,31 @@ if (choice.finish_reason === 'length') {
                 }
             }
         }
+    }
+
+    for (const locale of Object.keys(missingMessagesPerLocale)) {
+        const jsonToSend = Object.entries(jsonData).reduce((jsonToSend, [key, value]) => {
+            if (missingMessagesPerLocale[locale].includes(key)) {
+                jsonToSend[key] = value;
+            }
+
+            return jsonToSend;
+        }, {});
+
+        console.log(jsonToSend);
+
+        const perLocalePrompt = `Translate the values in the following JSON in to the following locale: ${locale}. The following rules must be followed:
+        - Translation must adhere to the Vue I18n message syntax.
+        - The response should be JSON where each locale is a root key.
+        
+        ${JSON.stringify(jsonToSend)}`;
+
+        const completion = await openai.createCompletion({
+            model: "text-davinci-003",
+            prompt: perLocalePrompt,
+            temperature: 0,
+            max_tokens: 100,
+          });
+        
     }
 }
