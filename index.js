@@ -10,15 +10,22 @@ const MAX_TOKENS = 1000;
 
 const MAX_PROMPT_TOKEN_LIMIT = MAX_TOKENS * (1/3);
 
+const commaSeparatedList = (value) => value.split(',');
+
 program
   .option('-k, --key <type>')
-  .option('-i, --input-path <type>');
+  .option('-i, --input-path <type>')
+  .option('-l, --locales <type>', 'hm', commaSeparatedList);
 
 program.parse();
 
 const options = program.opts();
 
 let data = '';
+
+const locales = options.locales;
+
+const localeTextList = locales.join(', ');
 
 try {
     data = await fs.readFile(options.inputPath, { encoding: 'utf8' });
@@ -34,7 +41,7 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-const prompt = `Translate the values in the following JSON in to the following locales: 'de-DE', 'it-IT', 'pt-PT'. Translation must adhere to the Vue I18n message syntax.
+const prompt = `Translate the values in the following JSON in to the following locales: ${localeTextList}. Translation must adhere to the Vue I18n message syntax.
 ${data}`;
 
 const promptTokenLength = encode(prompt).length;
@@ -47,10 +54,9 @@ const jsonDataHalf1 = Object.fromEntries(arrayDataHalf1);
 
 const jsonDataHalf1TokenLength = encode(JSON.stringify(jsonDataHalf1)).length;
 
-const newPrompt = `Translate the values in the following JSON in to the following locales: 'de-DE', 'it-IT', 'pt-PT'. The following rules must be followed:
+const newPrompt = `Translate the values in the following JSON in to the following locales: ${localeTextList}. The following rules must be followed:
 - Translation must adhere to the Vue I18n message syntax.
 - The response should be JSON where each locale is a root key.
-- Stop translating if the response would result in unterminated JSON. 
 
 ${JSON.stringify(jsonDataHalf1)}`;
 
@@ -68,6 +74,7 @@ if (choice.finish_reason === 'length') {
     
     for (const [locale, messages] of Object.entries(responseJSON)) {
         const messageKeys = Object.keys(messages);
+        console.log(locale);
         // diff the keys against the ones provided (for each locale). And check if locale totally missing
     }
 }
