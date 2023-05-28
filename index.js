@@ -6,6 +6,7 @@ import partialJSONParse from 'partial-json-parser';
 import _ from 'lodash'
 
 // The logrocket blog had article on CLI colours - or maybe commander can do it?
+// Lots of tokens are wasted on whitespace
 
 const MAX_TOKENS = 1000;
 
