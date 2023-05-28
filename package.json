@@ -1,7 +1,7 @@
 {
   "name": "vue-i18n-translation-generator",
-  "version": "1.0.0",
   "description": "A simple CLI tool that utilizes the OpenAI API to automatically generate static Vue I18n translation files.",
+  "version": "1.0.0",
   "keywords": [],
   "main": "dist/index.js",
   "scripts": {
