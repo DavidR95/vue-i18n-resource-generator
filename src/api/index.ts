@@ -1,4 +1,7 @@
-import { Configuration, OpenAIApi } from 'openai';
+import { Configuration, CreateCompletionResponse, OpenAIApi } from 'openai';
+
+export const MAX_TOKENS = 100;
+const TEMPERATURE = 0;
 
 let client: OpenAIApi;
 
@@ -10,6 +13,13 @@ export const initializeClient = (key: string): void => {
   client = new OpenAIApi(configuration);
 }
 
-export const req = () => {
-  console.log(client);
+export const sendRequest = async (prompt: string): Promise<CreateCompletionResponse> => {
+  const { data } = await client.createCompletion({
+    model: 'text-davinci-003',
+    prompt,
+    temperature: TEMPERATURE,
+    max_tokens: MAX_TOKENS,
+  });
+
+  return data;
 }
