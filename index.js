@@ -5,7 +5,6 @@ import { encode } from 'gpt-3-encoder';
 import partialJSONParse from 'partial-json-parser';
 import _ from 'lodash';
 
-// The logrocket blog had article on CLI colours - or maybe commander can do it?
 // Lots of tokens are wasted on whitespace
 
 const MAX_TOKENS = 1000;
@@ -118,7 +117,7 @@ if (choice.finish_reason === 'length') {
 
     const perLocalePrompt = `Translate the values in the following JSON in to the following locale: ${locale}. The following rules must be followed:
         - Translation must adhere to the Vue I18n message syntax.
-        
+
         ${JSON.stringify(jsonToSend)}`;
 
     const completion = await openai.createCompletion({

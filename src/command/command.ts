@@ -20,4 +20,5 @@ export const command = createCommand()
     'The list of locales you would like to translate your input messages in to.',
   )
   .helpOption('-h, --help', 'Displays help information.')
-  .showHelpAfterError('(add --help for additional information)');
+  .showHelpAfterError('(add --help for additional information)')
+  .parse();
