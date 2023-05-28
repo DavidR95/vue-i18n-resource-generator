@@ -1,5 +1,6 @@
-import { program } from 'commander';
+import { Command } from 'commander';
 
+const program = new Command();
 console.log('hello world');
 
 program
@@ -9,3 +10,7 @@ program
 
 program.option('-k, --key <type>').option('-i, --input-path <type>');
 // .option('-l, --locales <type>', 'hm', commaSeparatedList);
+
+program.parse();
+
+console.log(program.opts())
