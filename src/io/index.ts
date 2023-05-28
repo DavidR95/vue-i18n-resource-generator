@@ -8,7 +8,7 @@ import { Messages } from '../messages';
 export const readInput = (inputPath: string): Messages => {
   const input = fs.readFileSync(inputPath, 'utf-8');
 
-  return JSON.parse(input);
+  return JSON.parse(input) as Messages;
 };
 
 /**

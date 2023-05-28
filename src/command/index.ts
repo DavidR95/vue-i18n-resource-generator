@@ -1,4 +1,4 @@
-import { createCommand } from 'commander';
+import { createCommand } from '@commander-js/extra-typings';
 import { name, description, version } from '../../package.json';
 
 export const command = createCommand()
