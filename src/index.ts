@@ -1,4 +1,5 @@
 import { createCommand } from 'commander';
+import chalk from 'chalk';
 import { name, description, version } from '../package.json';
 
 const command = createCommand();
@@ -28,4 +29,9 @@ command
 
 command.parse();
 
-console.log(command.opts());
+const { log } = console;
+
+const commandOptions = command.opts();
+
+log(chalk.blue(`Using API key ending in ${chalk.bold.italic(commandOptions['key'].slice(-4))}`));
+
