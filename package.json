@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "A simple CLI tool that utilizes the OpenAI API to automatically generate static Vue I18n translation files.",
   "keywords": [],
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "format": "prettier --ignore-path .gitignore --write .",
@@ -30,6 +32,7 @@
     "lodash": "^4.17.21",
     "partial-json-parser": "^1.2.2",
     "prettier": "^2.8.8",
+    "rimraf": "^5.0.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   }
