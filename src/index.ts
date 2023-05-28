@@ -1,7 +1,8 @@
 import chalk from 'chalk';
 import { command } from './command';
 import { readInput } from './io';
-import { initializeClient } from './api';
+import { MAX_TOKENS, initializeClient } from './api';
+import { createPrompt } from './prompt';
 
 const NUMBER_OF_API_KEY_CHARACTERS_TO_SHOW = 4;
 
@@ -38,6 +39,16 @@ log(
 );
 
 initializeClient(key);
+
+const prompt = createPrompt(inputMessages, locales, MAX_TOKENS / 2);
+
+log(
+  chalk.magenta(
+    `Requesting translations from OpenAI using the following prompt:\n`,
+  ),
+);
+
+log(`${chalk.blue.italic(prompt)} \n`);
 
 log(
   chalk.magenta(

@@ -1,5 +1,6 @@
 import { Configuration, CreateCompletionResponse, OpenAIApi } from 'openai';
 
+// Make this an option?
 export const MAX_TOKENS = 100;
 const TEMPERATURE = 0;
 
