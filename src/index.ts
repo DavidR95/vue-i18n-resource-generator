@@ -1,15 +1,13 @@
 import chalk from 'chalk';
 import { command } from './command';
 import { readInput } from './io';
-import { initializeAPIClient } from './open-ai';
+import { initializeClient } from './api';
 
 const NUMBER_OF_API_KEY_CHARACTERS_TO_SHOW = 4;
 
 const { log } = console;
 
-const commandOptions = command.opts();
-
-const { key, inputPath, locales } = commandOptions;
+const { key, inputPath, locales } = command.opts();
 
 log(
   chalk.magenta(
@@ -31,22 +29,20 @@ log(
   ),
 );
 
-initializeAPIClient(key);
+log(
+  chalk.magenta(
+    `Initializing OpenAI API client using key ******${chalk.bold(
+      key.slice(-NUMBER_OF_API_KEY_CHARACTERS_TO_SHOW),
+    )} \n`,
+  ),
+);
 
-
+initializeClient(key);
 
 log(
   chalk.magenta(
     `Messages will be translated in to the following locales: ${chalk.bold(
       locales.join(', '),
-    )} \n`,
-  ),
-);
-
-log(
-  chalk.magenta(
-    `Using OpenAPI key ******${chalk.bold(
-      key.slice(-NUMBER_OF_API_KEY_CHARACTERS_TO_SHOW),
     )} \n`,
   ),
 );
