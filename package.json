@@ -16,7 +16,6 @@
     "prepublishOnly": "npm run typecheck && npm run lint && npm run test"
   },
   "license": "ISC",
-  "type": "module",
   "husky": {
     "hooks": {
       "pre-commit": "npm run typecheck && npm run lint",
@@ -24,18 +23,16 @@
     }
   },
   "devDependencies": {
-    "commander": "^10.0.1",
-    "gpt-3-encoder": "^1.1.4",
-    "openai": "^3.2.1"
-  },
-  "dependencies": {
     "@tsconfig/strictest": "^2.0.1",
     "@typescript-eslint/eslint-plugin": "^5.59.7",
     "@typescript-eslint/parser": "^5.59.7",
-    "eslint": "^8.41.0",
+    "commander": "^10.0.1",
     "eslint-config-prettier": "^8.8.0",
+    "eslint": "^8.41.0",
+    "gpt-3-encoder": "^1.1.4",
     "husky": "^4.3.8",
     "lodash": "^4.17.21",
+    "openai": "^3.2.1",
     "partial-json-parser": "^1.2.2",
     "prettier": "^2.8.8",
     "rimraf": "^5.0.1",
