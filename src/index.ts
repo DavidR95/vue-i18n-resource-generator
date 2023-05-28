@@ -1,6 +1,7 @@
 import chalk from 'chalk';
-import { command } from './command/command';
-import { readInput } from './io/io';
+import { command } from './command';
+import { readInput } from './io';
+import { initializeAPIClient } from './open-ai';
 
 const NUMBER_OF_API_KEY_CHARACTERS_TO_SHOW = 4;
 
@@ -30,13 +31,9 @@ log(
   ),
 );
 
-log(
-  chalk.magenta(
-    `Attempting to translate Vue I18n messages found within the JSON file located at: ${chalk.bold.underline(
-      inputPath,
-    )} \n`,
-  ),
-);
+initializeAPIClient(key);
+
+
 
 log(
   chalk.magenta(

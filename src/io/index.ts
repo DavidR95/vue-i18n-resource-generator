@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { Messages } from '../messages/messages';
+import { Messages } from '../messages';
 
 /**
  * Reads the file from the given input. It is assumed the file will be JSON and
