@@ -48,7 +48,7 @@ log(
   ),
 );
 
-log(`${chalk.blue.italic(prompt)} \n`);
+log(`${chalk.blue.italic(prompt)}\n`);
 
 log(
   chalk.magenta(
