@@ -4,6 +4,7 @@ import { readInput, writeOutput } from './io';
 import { MAX_TOKENS, initializeClient, sendRequest } from './api';
 import { createPrompt } from './prompt';
 import { extractLocaleMappedMessagesFromChoice } from './completion';
+import { LocaleMappedMessages } from './messages';
 
 const NUMBER_OF_API_KEY_CHARACTERS_TO_SHOW = 4;
 
@@ -87,6 +88,44 @@ const main = async (): Promise<void> => {
 
     for (const [locale, messages] of Object.entries(localeMappedMessages)) {
       writeOutput(outputPath, locale, messages);
+    }
+
+    return;
+  }
+
+  const missingMessagesPerLocale: Record<string, string[]> = {};
+  const translatedMessagesPerLocale: LocaleMappedMessages = {};
+
+  if (choice.finish_reason === 'length') {
+    for (const [locale, messages] of Object.entries(localeMappedMessages)) {
+      for (const [messageKey, messageValue] of Object.entries(messages)) {
+        if (!translatedMessagesPerLocale[locale]) {
+          translatedMessagesPerLocale[locale] = {};
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        translatedMessagesPerLocale[locale]![messageKey] = messageValue;
+      }
+
+      log(
+        chalk.magenta(
+          `For ${locale}, we so far we have the following translated messages ${JSON.stringify(translatedMessagesPerLocale[locale])}\n`,
+        ),
+      );
+
+      const messageKeys = Object.keys(messages);
+
+      const missingMessageKeys = Object.keys(inputMessages).filter(
+        (messageKey) => !messageKeys.includes(messageKey),
+      );
+
+      missingMessagesPerLocale[locale] = missingMessageKeys;
+
+      log(
+        chalk.magenta(
+          `For ${locale}, we are missing the following translations ${JSON.stringify(missingMessagesPerLocale[locale])}\n`,
+        ),
+      );
     }
   }
 };
