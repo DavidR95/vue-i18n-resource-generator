@@ -18,7 +18,20 @@ export const createPrompt = (
 ${JSON.stringify(tokenLimitedMessages)}`;
 };
 
-export const limitMessagesToMaxTokens = (
+export const createSingeLocalePrompt = (
+  messages: Messages,
+  locale: string,
+  maxTokens: number,
+): string => {
+  const tokenLimitedMessages = limitMessagesToMaxTokens(messages, maxTokens);
+
+  return `Translate the values in the following JSON in to the following locale: ${locale}. The following rules must be followed:
+- Translations must adhere to the Vue I18n message syntax.
+
+${JSON.stringify(tokenLimitedMessages)}`;
+};
+
+const limitMessagesToMaxTokens = (
   messages: Messages,
   maxTokens: number,
 ): Messages => {

@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import { command } from './command';
 import { readInput, writeOutput } from './io';
 import { MAX_TOKENS, initializeClient, sendRequest } from './api';
-import { createPrompt } from './prompt';
+import { createPrompt, createSingeLocalePrompt } from './prompt';
 import { extractLocaleMappedMessagesFromChoice } from './completion';
 import { LocaleMappedMessages, Messages } from './messages';
 
@@ -150,6 +150,26 @@ const main = async (): Promise<void> => {
         chalk.magenta(
           `Making a new request with the following translation messages ${JSON.stringify(
             remainingInputMessages,
+          )}\n`,
+        ),
+      );
+
+      const prompt = createSingeLocalePrompt(remainingInputMessages, locale, MAX_TOKENS / 2);
+
+      log(
+        chalk.magenta(
+          `Requesting translations from OpenAI using the following prompt:\n`,
+        ),
+      );
+
+      log(`${chalk.blue.italic(prompt)}\n`);
+
+      const completion = await sendRequest(prompt);
+
+      log(
+        chalk.magenta(
+          `OpenAI provided the following response to the previous prompt: ${chalk.green.italic(
+            JSON.stringify(completion),
           )}\n`,
         ),
       );
