@@ -3,6 +3,7 @@ import { command } from './command';
 import { readInput } from './io';
 import { MAX_TOKENS, initializeClient, sendRequest } from './api';
 import { createPrompt } from './prompt';
+import { extractLocaleMappedMessagesFromChoice } from './completion';
 
 const NUMBER_OF_API_KEY_CHARACTERS_TO_SHOW = 4;
 
@@ -51,12 +52,28 @@ const main = async (): Promise<void> => {
 
   log(`${chalk.blue.italic(prompt)}\n`);
 
-  const promptResponse = await sendRequest(prompt);
+  const completion = await sendRequest(prompt);
 
   log(
     chalk.magenta(
       `OpenAI provided the following response to the previous prompt: ${chalk.green.italic(
-        promptResponse,
+        JSON.stringify(completion),
+      )}\n`,
+    ),
+  );
+
+  const choice = completion.choices[0];
+
+  if (!choice) {
+    throw new Error('');
+  }
+
+  const localeMappedMessages = extractLocaleMappedMessagesFromChoice(choice);
+
+  log(
+    chalk.magenta(
+      `The translated messages are in the JSON form of: ${chalk.green.italic(
+        JSON.stringify(localeMappedMessages),
       )}\n`,
     ),
   );
