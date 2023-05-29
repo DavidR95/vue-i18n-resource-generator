@@ -154,7 +154,11 @@ const main = async (): Promise<void> => {
         ),
       );
 
-      const prompt = createSingeLocalePrompt(remainingInputMessages, locale, MAX_TOKENS / 2);
+      const prompt = createSingeLocalePrompt(
+        remainingInputMessages,
+        locale,
+        MAX_TOKENS / 2,
+      );
 
       log(
         chalk.magenta(
@@ -174,6 +178,12 @@ const main = async (): Promise<void> => {
         ),
       );
     }
+  }
+
+  for (const [locale, messages] of Object.entries(
+    translatedMessagesPerLocale,
+  )) {
+    writeOutput(outputPath, locale, messages);
   }
 };
 
