@@ -4,7 +4,7 @@ import { readInput, writeOutput } from './io';
 import { MAX_TOKENS, initializeClient, sendRequest } from './api';
 import { createPrompt } from './prompt';
 import { extractLocaleMappedMessagesFromChoice } from './completion';
-import { LocaleMappedMessages } from './messages';
+import { LocaleMappedMessages, Messages } from './messages';
 
 const NUMBER_OF_API_KEY_CHARACTERS_TO_SHOW = 4;
 
@@ -118,7 +118,9 @@ const main = async (): Promise<void> => {
         ),
       );
 
-      const messageKeys = Object.keys(translatedMessagesPerLocale[locale] ?? []);
+      const messageKeys = Object.keys(
+        translatedMessagesPerLocale[locale] ?? [],
+      );
 
       const missingMessageKeys = Object.keys(inputMessages).filter(
         (messageKey) => !messageKeys.includes(messageKey),
@@ -130,6 +132,24 @@ const main = async (): Promise<void> => {
         chalk.magenta(
           `For ${locale}, we are missing the following translations ${JSON.stringify(
             missingMessagesPerLocale[locale],
+          )}\n`,
+        ),
+      );
+
+      const remainingInputMessages = Object.entries(
+        inputMessages,
+      ).reduce<Messages>((remainingInputMessages, [key, value]) => {
+        if (missingMessagesPerLocale[locale]?.includes(key)) {
+          remainingInputMessages[key] = value;
+        }
+
+        return remainingInputMessages;
+      }, {});
+
+      log(
+        chalk.magenta(
+          `Making a new request with the following translation messages ${JSON.stringify(
+            remainingInputMessages,
           )}\n`,
         ),
       );
