@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { command } from './command';
-import { readInput } from './io';
+import { readInput, writeOutput } from './io';
 import { MAX_TOKENS, initializeClient, sendRequest } from './api';
 import { createPrompt } from './prompt';
 import { extractLocaleMappedMessagesFromChoice } from './completion';
@@ -10,7 +10,7 @@ const NUMBER_OF_API_KEY_CHARACTERS_TO_SHOW = 4;
 const { log } = console;
 
 const main = async (): Promise<void> => {
-  const { key, inputPath, locales } = command.opts();
+  const { key, inputPath, outputPath, locales } = command.opts();
 
   log(
     chalk.magenta(
@@ -77,6 +77,18 @@ const main = async (): Promise<void> => {
       )}\n`,
     ),
   );
-}
+
+  if (choice.finish_reason === 'stop') {
+    log(
+      chalk.magenta(
+        `OpenAI provided a finish reason of 'stop'. Now writing output JSON files to ${outputPath}\n`,
+      ),
+    );
+
+    for (const [locale, messages] of Object.entries(localeMappedMessages)) {
+      writeOutput(outputPath, locale, messages);
+    }
+  }
+};
 
 void (async () => main())();
