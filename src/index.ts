@@ -69,7 +69,10 @@ const main = async (): Promise<void> => {
     throw new Error('');
   }
 
-  const localeMappedMessages = extractLocaleMappedMessagesFromChoice(choice, locales);
+  const localeMappedMessages = extractLocaleMappedMessagesFromChoice(
+    choice,
+    locales,
+  );
 
   log(
     chalk.magenta(
@@ -109,11 +112,13 @@ const main = async (): Promise<void> => {
 
       log(
         chalk.magenta(
-          `For ${locale}, we so far we have the following translated messages ${JSON.stringify(translatedMessagesPerLocale[locale] ?? [])}\n`,
+          `For ${locale}, we so far we have the following translated messages ${JSON.stringify(
+            translatedMessagesPerLocale[locale] ?? [],
+          )}\n`,
         ),
       );
 
-      const messageKeys = Object.keys(messages);
+      const messageKeys = Object.keys(translatedMessagesPerLocale[locale] ?? []);
 
       const missingMessageKeys = Object.keys(inputMessages).filter(
         (messageKey) => !messageKeys.includes(messageKey),
@@ -123,7 +128,9 @@ const main = async (): Promise<void> => {
 
       log(
         chalk.magenta(
-          `For ${locale}, we are missing the following translations ${JSON.stringify(missingMessagesPerLocale[locale])}\n`,
+          `For ${locale}, we are missing the following translations ${JSON.stringify(
+            missingMessagesPerLocale[locale],
+          )}\n`,
         ),
       );
     }
