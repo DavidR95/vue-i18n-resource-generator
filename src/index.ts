@@ -69,7 +69,7 @@ const main = async (): Promise<void> => {
     throw new Error('');
   }
 
-  const localeMappedMessages = extractLocaleMappedMessagesFromChoice(choice);
+  const localeMappedMessages = extractLocaleMappedMessagesFromChoice(choice, locales);
 
   log(
     chalk.magenta(
@@ -109,7 +109,7 @@ const main = async (): Promise<void> => {
 
       log(
         chalk.magenta(
-          `For ${locale}, we so far we have the following translated messages ${JSON.stringify(translatedMessagesPerLocale[locale])}\n`,
+          `For ${locale}, we so far we have the following translated messages ${JSON.stringify(translatedMessagesPerLocale[locale] ?? [])}\n`,
         ),
       );
 
