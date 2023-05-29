@@ -5,6 +5,7 @@ import { MAX_TOKENS, initializeClient, sendRequest } from './api';
 import { createPrompt, createSingeLocalePrompt } from './prompt';
 import { extractLocaleMappedMessagesFromChoice } from './completion';
 import { LocaleMappedMessages, Messages } from './messages';
+import partialJSONParse from 'partial-json-parser';
 
 const NUMBER_OF_API_KEY_CHARACTERS_TO_SHOW = 4;
 
@@ -99,8 +100,9 @@ const main = async (): Promise<void> => {
   const missingMessagesPerLocale: Record<string, string[]> = {};
   const translatedMessagesPerLocale: LocaleMappedMessages = {};
 
-  if (choice.finish_reason === 'length') {
-    for (const [locale, messages] of Object.entries(localeMappedMessages)) {
+  for (const [locale, messages] of Object.entries(localeMappedMessages)) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    while ((missingMessagesPerLocale[locale] ?? []).length !== 0 || Object.keys(translatedMessagesPerLocale[locale] ?? []).length === 0) {
       for (const [messageKey, messageValue] of Object.entries(messages)) {
         if (!translatedMessagesPerLocale[locale]) {
           translatedMessagesPerLocale[locale] = {};
@@ -177,6 +179,40 @@ const main = async (): Promise<void> => {
           )}\n`,
         ),
       );
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const newChoice = completion.choices[0]!;
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const newMessages = partialJSONParse<Messages>(newChoice.text!);
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      for (const [messageKey, messageValue] of Object.entries(newMessages)) {
+        if (!translatedMessagesPerLocale[locale]) {
+          translatedMessagesPerLocale[locale] = {};
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        translatedMessagesPerLocale[locale]![messageKey] = messageValue;
+      }
+
+      log(
+        chalk.magenta(
+          `For ${locale}, we so far we have the following translated messages ${JSON.stringify(
+            translatedMessagesPerLocale[locale] ?? [],
+          )}\n`,
+        ),
+      );
+
+      const messageKeys2 = Object.keys(
+        translatedMessagesPerLocale[locale] ?? [],
+      );
+
+      const missingMessageKeys2 = Object.keys(inputMessages).filter(
+        (messageKey) => !messageKeys2.includes(messageKey),
+      );
+
+      missingMessagesPerLocale[locale] = missingMessageKeys2;
     }
   }
 

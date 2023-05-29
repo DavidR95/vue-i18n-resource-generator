@@ -20,5 +20,5 @@ export const writeOutput = (
   locale: string,
   messages: Messages,
 ): void => {
-  fs.writeFileSync(`${outputPath}/${locale}.json`, JSON.stringify(messages));
+  fs.writeFileSync(`${outputPath}/${locale}.json`, JSON.stringify(messages, null, 2));
 };
