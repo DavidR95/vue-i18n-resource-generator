@@ -22,10 +22,18 @@ const TEMPERATURE = 0;
  */
 const NUMBER_OF_COMPLETIONS = 1;
 
+/**
+ * The number of end-characters to display of the user's OpenAI key when
+ * logging.
+ */
 const NUMBER_OF_API_KEY_CHARACTERS_TO_SHOW = 4;
 
 let client: OpenAIApi;
 
+/**
+ * Initializes the API client using the given API key. This method must be
+ * called before attempting to use any methods that make API calls.
+ */
 export const initializeClient = (apiKey: string): void => {
   console.log(
     chalk.magenta(
@@ -38,6 +46,11 @@ export const initializeClient = (apiKey: string): void => {
   client = new OpenAIApi(new Configuration({ apiKey }));
 };
 
+/**
+ * Sends a completion request for given prompt to OpenAI and returns
+ * the first completion returned. Any HTTP errors encountered will
+ * cause the process to immediately exit.
+ */
 export const sendCompletionRequest = async (
   prompt: string,
 ): Promise<CreateCompletionResponseChoicesInner> => {
