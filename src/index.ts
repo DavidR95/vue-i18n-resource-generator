@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { command } from './command';
 import { readInput, writeOutput } from './io';
-import { MAXIMUM_TOKENS, initializeClient, sendCompletionRequest } from './api';
+import { PROMPT_MAXIMUM_TOKENS, initializeClient, sendCompletionRequest } from './api';
 import { createPrompt, createSingeLocalePrompt } from './prompt';
 import { extractLocaleMappedMessagesFromChoice } from './completion';
 import { LocaleMappedMessages, Messages } from './messages';
@@ -34,7 +34,7 @@ const main = async (): Promise<void> => {
 
   initializeClient(key);
 
-  const prompt = createPrompt(inputMessages, locales, MAXIMUM_TOKENS / 2);
+  const prompt = createPrompt(inputMessages, locales, PROMPT_MAXIMUM_TOKENS);
 
   const completion = await sendCompletionRequest(prompt);
 
@@ -127,7 +127,7 @@ const main = async (): Promise<void> => {
       const prompt = createSingeLocalePrompt(
         remainingInputMessages,
         locale,
-        MAXIMUM_TOKENS / 2,
+        PROMPT_MAXIMUM_TOKENS,
       );
 
       const newCompletion = await sendCompletionRequest(prompt);

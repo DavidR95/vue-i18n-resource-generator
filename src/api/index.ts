@@ -6,10 +6,14 @@ import {
 } from 'openai';
 
 /**
- * Maximum number of tokens for the model 'text-davinci-003', taken from
+ * The maximum number of tokens for the combined prompt and completion
+ * using the model 'text-davinci-003'. Taken from
  * https://platform.openai.com/docs/models/gpt-3-5.
  */
-export const MAXIMUM_TOKENS = 4096;
+const OVERALL_MAXIMUM_TOKENS = 4096;
+
+export const PROMPT_MAXIMUM_TOKENS = OVERALL_MAXIMUM_TOKENS / 2;
+const COMPLETION_MAXIMUM_TOKENS = OVERALL_MAXIMUM_TOKENS / 2;
 
 /**
  * Use a temperature of 0 to ensure the response is reliably deterministic.
@@ -61,7 +65,7 @@ export const sendCompletionRequest = async (
       model: 'text-davinci-003',
       prompt,
       temperature: TEMPERATURE,
-      max_tokens: MAXIMUM_TOKENS,
+      max_tokens: COMPLETION_MAXIMUM_TOKENS,
       n: NUMBER_OF_COMPLETIONS,
     });
 
@@ -133,4 +137,5 @@ const logCompletionError = (error: AxiosError): void => {
   }
 };
 
+// Note that Axios is a dependency of the OpenAI library
 type AxiosError = import('axios').AxiosError;
