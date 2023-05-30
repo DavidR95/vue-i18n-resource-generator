@@ -129,7 +129,7 @@ const logCompletionError = (error: AxiosError): void => {
       ),
     );
 
-    console.log(chalk.red.italic(JSON.stringify(error.message, null, 2)));
+    console.log(chalk.red.italic(error.message));
   }
 };
 
