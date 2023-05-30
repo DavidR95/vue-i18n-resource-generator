@@ -1,13 +1,11 @@
 import chalk from 'chalk';
 import { command } from './command';
 import { readInput, writeOutput } from './io';
-import { MAX_TOKENS, initializeClient, sendRequest } from './api';
+import { MAXIMUM_TOKENS, initializeClient, sendCompletionRequest } from './api';
 import { createPrompt, createSingeLocalePrompt } from './prompt';
 import { extractLocaleMappedMessagesFromChoice } from './completion';
 import { LocaleMappedMessages, Messages } from './messages';
 import partialJSONParse from 'partial-json-parser';
-
-const NUMBER_OF_API_KEY_CHARACTERS_TO_SHOW = 4;
 
 const { log } = console;
 
@@ -34,44 +32,14 @@ const main = async (): Promise<void> => {
     ),
   );
 
-  log(
-    chalk.magenta(
-      `Initializing OpenAI API client using key ******${chalk.bold(
-        key.slice(-NUMBER_OF_API_KEY_CHARACTERS_TO_SHOW),
-      )} \n`,
-    ),
-  );
-
   initializeClient(key);
 
-  const prompt = createPrompt(inputMessages, locales, MAX_TOKENS / 2);
+  const prompt = createPrompt(inputMessages, locales, MAXIMUM_TOKENS / 2);
 
-  log(
-    chalk.magenta(
-      `Requesting translations from OpenAI using the following prompt:\n`,
-    ),
-  );
-
-  log(`${chalk.blue.italic(prompt)}\n`);
-
-  const completion = await sendRequest(prompt);
-
-  log(
-    chalk.magenta(
-      `OpenAI provided the following response to the previous prompt: ${chalk.green.italic(
-        JSON.stringify(completion),
-      )}\n`,
-    ),
-  );
-
-  const choice = completion.choices[0];
-
-  if (!choice) {
-    throw new Error('');
-  }
+  const completion = await sendCompletionRequest(prompt);
 
   const localeMappedMessages = extractLocaleMappedMessagesFromChoice(
-    choice,
+    completion,
     locales,
   );
 
@@ -83,7 +51,7 @@ const main = async (): Promise<void> => {
     ),
   );
 
-  if (choice.finish_reason === 'stop') {
+  if (completion.finish_reason === 'stop') {
     log(
       chalk.magenta(
         `OpenAI provided a finish reason of 'stop'. Now writing output JSON files to ${outputPath}\n`,
@@ -159,18 +127,10 @@ const main = async (): Promise<void> => {
       const prompt = createSingeLocalePrompt(
         remainingInputMessages,
         locale,
-        MAX_TOKENS / 2,
+        MAXIMUM_TOKENS / 2,
       );
 
-      log(
-        chalk.magenta(
-          `Requesting translations from OpenAI using the following prompt:\n`,
-        ),
-      );
-
-      log(`${chalk.blue.italic(prompt)}\n`);
-
-      const completion = await sendRequest(prompt);
+      const newCompletion = await sendCompletionRequest(prompt);
 
       log(
         chalk.magenta(
@@ -181,10 +141,7 @@ const main = async (): Promise<void> => {
       );
 
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const newChoice = completion.choices[0]!;
-
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const newMessages = partialJSONParse<Messages>(newChoice.text!);
+      const newMessages = partialJSONParse<Messages>(newCompletion.text!);
 
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       for (const [messageKey, messageValue] of Object.entries(newMessages)) {
