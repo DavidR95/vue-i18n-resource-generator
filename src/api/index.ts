@@ -48,8 +48,8 @@ export const initializeClient = (apiKey: string): void => {
 
 /**
  * Sends a completion request for given prompt to OpenAI and returns
- * the first completion returned. Any HTTP errors encountered will
- * cause the process to immediately exit.
+ * the first completion returned. Any errors encountered will cause
+ * the process to immediately exit.
  */
 export const sendCompletionRequest = async (
   prompt: string,
@@ -84,7 +84,7 @@ export const sendCompletionRequest = async (
 const logCompletionRequest = (prompt: string): void => {
   console.log(
     chalk.magenta(
-      `Sending a completion request to OpenAI using the following prompt:`,
+      'Sending a completion request to OpenAI using the following prompt:',
     ),
   );
 
@@ -125,7 +125,7 @@ const logCompletionError = (error: AxiosError): void => {
   } else {
     console.log(
       chalk.red(
-        'There was an error when setting up the completion request to send to OpenAI:',
+        'There was an error when sending the completion request to OpenAI:',
       ),
     );
 
