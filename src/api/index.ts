@@ -1,5 +1,9 @@
 import chalk from 'chalk';
-import { Configuration, CreateCompletionResponseChoicesInner, OpenAIApi } from 'openai';
+import {
+  Configuration,
+  CreateCompletionResponseChoicesInner,
+  OpenAIApi,
+} from 'openai';
 
 /**
  * Maximum number of tokens for the model 'text-davinci-003', taken from
@@ -37,35 +41,83 @@ export const initializeClient = (apiKey: string): void => {
 export const sendCompletionRequest = async (
   prompt: string,
 ): Promise<CreateCompletionResponseChoicesInner> => {
+  logCompletionRequest(prompt);
+
+  try {
+    const { data } = await client.createCompletion({
+      model: 'text-davinci-003',
+      prompt,
+      temperature: TEMPERATURE,
+      max_tokens: MAXIMUM_TOKENS,
+      n: NUMBER_OF_COMPLETIONS,
+    });
+
+    const completion = data.choices[0];
+
+    if (!completion) {
+      throw new Error('OpenAI provided no completion for the previous prompt');
+    }
+
+    logCompletionResponse(completion);
+
+    return completion;
+  } catch (error) {
+    logCompletionError(error as AxiosError);
+
+    process.exit(1);
+  }
+};
+
+const logCompletionRequest = (prompt: string): void => {
   console.log(
     chalk.magenta(
-      `Sending a completion request to OpenAI using the following prompt:\n`,
+      `Sending a completion request to OpenAI using the following prompt:`,
     ),
   );
 
   console.log(`${chalk.blue.italic(prompt)}\n`);
+};
 
-  const { data } = await client.createCompletion({
-    model: 'text-davinci-003',
-    prompt,
-    temperature: TEMPERATURE,
-    max_tokens: MAXIMUM_TOKENS,
-    n: NUMBER_OF_COMPLETIONS,
-  });
-
-  const completion = data.choices[0];
-
+const logCompletionResponse = (
+  completion: CreateCompletionResponseChoicesInner,
+): void => {
   console.log(
     chalk.magenta(
       `OpenAI provided the following completion for the previous prompt: ${chalk.green.italic(
-        JSON.stringify(completion),
+        JSON.stringify(completion, null, 2),
       )}\n`,
     ),
   );
-
-  if (!completion) {
-    throw new Error('OpenAI provided no completion for the previous prompt');
-  }
-
-  return completion;
 };
+
+const logCompletionError = (error: AxiosError): void => {
+  if (error.response) {
+    console.log(
+      chalk.red(
+        `OpenAI returned the following error in response to the completion request:`,
+      ),
+    );
+
+    console.log(chalk.red.italic(`Status code: ${error.response.status}`));
+
+    console.log(chalk.red.italic(JSON.stringify(error.response.data, null, 2)));
+  } else if (error.request) {
+    console.log(
+      chalk.red(
+        'Received no response from OpenAI after sending a completion request. The following request was sent:',
+      ),
+    );
+
+    console.log(chalk.red.italic(JSON.stringify(error.request, null, 2)));
+  } else {
+    console.log(
+      chalk.red(
+        'There was an error when setting up the completion request to send to OpenAI:',
+      ),
+    );
+
+    console.log(chalk.red.italic(JSON.stringify(error.message, null, 2)));
+  }
+};
+
+type AxiosError = import('axios').AxiosError;

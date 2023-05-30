@@ -19,7 +19,7 @@ const main = async (): Promise<void> => {
   );
 
   log(
-    chalk.red.italic(
+    chalk.yellow.italic(
       'Note, it is assumed that this is a JSON file representing messages written in valid Vue I18n message syntax.\n',
     ),
   );
