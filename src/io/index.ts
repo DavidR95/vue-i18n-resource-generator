@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { Messages } from '../messages';
+import { LocaleMappedMessages, Messages } from '../messages';
 
 /**
  * Reads the file from the given input path. It is assumed the file will be JSON and
@@ -15,7 +15,7 @@ export const readInput = (inputPath: string): Messages => {
  * Writes the given messages to a JSON file at given output path, where the file
  * name is the corresponding locale.
  */
-export const writeOutput = (
+const writeOutput = (
   outputPath: string,
   locale: string,
   messages: Messages,
@@ -24,4 +24,13 @@ export const writeOutput = (
     `${outputPath}/${locale}.json`,
     JSON.stringify(messages, null, 2),
   );
+};
+
+export const writeLocaleMappedMessages = (
+  localeMappedMessages: LocaleMappedMessages,
+  outputPath: string,
+): void => {
+  for (const [locale, messages] of Object.entries(localeMappedMessages)) {
+    writeOutput(outputPath, locale, messages);
+  }
 };

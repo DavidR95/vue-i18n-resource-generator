@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { command } from './command';
-import { readInput, writeOutput } from './io';
+import { readInput, writeLocaleMappedMessages } from './io';
 import {
   PROMPT_MAXIMUM_TOKENS,
   initializeClient,
@@ -11,26 +11,20 @@ import { convertCompletionToLocaleMappedMessages } from './completion';
 import { LocaleMappedMessages, Messages } from './messages';
 import partialJSONParse from 'partial-json-parser';
 
-const { log } = console;
-
 const main = async (): Promise<void> => {
   const { key, inputPath, outputPath, locales } = command.opts();
 
-  log(
+  console.log(
     chalk.magenta(
-      `Reading input messages located at: ${chalk.bold.underline(inputPath)}.`,
-    ),
-  );
-
-  log(
-    chalk.yellow.italic(
-      'Note, it is assumed that this is a JSON file representing messages written in valid Vue I18n message syntax.\n',
+      `Reading input messages located at: ${chalk.bold.underline(
+        inputPath,
+      )}.\n`,
     ),
   );
 
   const inputMessages = readInput(inputPath);
 
-  log(
+  console.log(
     chalk.magenta(
       `Found ${Object.keys(inputMessages).length} messages to translate.\n`,
     ),
@@ -38,32 +32,19 @@ const main = async (): Promise<void> => {
 
   initializeClient(key);
 
-  const prompt = createMultiLocalePrompt(inputMessages, locales, PROMPT_MAXIMUM_TOKENS);
-
-  const completion = await sendCompletionRequest(prompt);
-
-  const localeMappedMessages = convertCompletionToLocaleMappedMessages(
-    completion,
+  const multiLocalePrompt = createMultiLocalePrompt(
+    inputMessages,
+    locales,
+    PROMPT_MAXIMUM_TOKENS,
   );
 
-  log(
-    chalk.magenta(
-      `The translated messages are in the JSON form of: ${chalk.green.italic(
-        JSON.stringify(localeMappedMessages),
-      )}\n`,
-    ),
-  );
+  const completion = await sendCompletionRequest(multiLocalePrompt);
+
+  const localeMappedMessages =
+    convertCompletionToLocaleMappedMessages(completion);
 
   if (completion.finish_reason === 'stop') {
-    log(
-      chalk.magenta(
-        `OpenAI provided a finish reason of 'stop'. Now writing output JSON files to ${outputPath}\n`,
-      ),
-    );
-
-    for (const [locale, messages] of Object.entries(localeMappedMessages)) {
-      writeOutput(outputPath, locale, messages);
-    }
+    handleStopFinishReason(localeMappedMessages, outputPath);
 
     return;
   }
@@ -87,7 +68,7 @@ const main = async (): Promise<void> => {
         translatedMessagesPerLocale[locale]![messageKey] = messageValue;
       }
 
-      log(
+      console.log(
         chalk.magenta(
           `For ${locale}, we so far we have the following translated messages ${JSON.stringify(
             translatedMessagesPerLocale[locale] ?? [],
@@ -105,7 +86,7 @@ const main = async (): Promise<void> => {
 
       missingMessagesPerLocale[locale] = missingMessageKeys;
 
-      log(
+      console.log(
         chalk.magenta(
           `For ${locale}, we are missing the following translations ${JSON.stringify(
             missingMessagesPerLocale[locale],
@@ -123,7 +104,7 @@ const main = async (): Promise<void> => {
         return remainingInputMessages;
       }, {});
 
-      log(
+      console.log(
         chalk.magenta(
           `Making a new request with the following translation messages ${JSON.stringify(
             remainingInputMessages,
@@ -139,7 +120,7 @@ const main = async (): Promise<void> => {
 
       const newCompletion = await sendCompletionRequest(prompt);
 
-      log(
+      console.log(
         chalk.magenta(
           `OpenAI provided the following response to the previous prompt: ${chalk.green.italic(
             JSON.stringify(completion),
@@ -160,7 +141,7 @@ const main = async (): Promise<void> => {
         translatedMessagesPerLocale[locale]![messageKey] = messageValue;
       }
 
-      log(
+      console.log(
         chalk.magenta(
           `For ${locale}, we so far we have the following translated messages ${JSON.stringify(
             translatedMessagesPerLocale[locale] ?? [],
@@ -180,11 +161,17 @@ const main = async (): Promise<void> => {
     }
   }
 
-  for (const [locale, messages] of Object.entries(
-    translatedMessagesPerLocale,
-  )) {
-    writeOutput(outputPath, locale, messages);
-  }
+  writeLocaleMappedMessages(translatedMessagesPerLocale, outputPath);
 };
+
+const handleStopFinishReason = (localeMappedMessages: LocaleMappedMessages, outputPath: string): void => {
+  console.log(
+    chalk.magenta(
+      `OpenAI provided a finish reason of 'stop'. Now writing output JSON files to ${outputPath}.`,
+    ),
+  );
+
+  writeLocaleMappedMessages(localeMappedMessages, outputPath);
+}
 
 void (async () => main())();
