@@ -2,7 +2,7 @@ import fs from 'fs';
 import { Messages } from '../messages';
 
 /**
- * Reads the file from the given input. It is assumed the file will be JSON and
+ * Reads the file from the given input path. It is assumed the file will be JSON and
  * the return value is automatically parsed accordingly.
  */
 export const readInput = (inputPath: string): Messages => {
@@ -13,7 +13,7 @@ export const readInput = (inputPath: string): Messages => {
 
 /**
  * Writes the given messages to a JSON file at given output path, where the file
- * name is the locale.
+ * name is the corresponding locale.
  */
 export const writeOutput = (
   outputPath: string,

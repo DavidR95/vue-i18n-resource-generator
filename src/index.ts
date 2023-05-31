@@ -6,7 +6,7 @@ import {
   initializeClient,
   sendCompletionRequest,
 } from './api';
-import { createPrompt, createSingeLocalePrompt } from './prompt';
+import { createMultiLocalePrompt, createSingeLocalePrompt } from './prompt';
 import { convertCompletionToLocaleMappedMessages } from './completion';
 import { LocaleMappedMessages, Messages } from './messages';
 import partialJSONParse from 'partial-json-parser';
@@ -38,7 +38,7 @@ const main = async (): Promise<void> => {
 
   initializeClient(key);
 
-  const prompt = createPrompt(inputMessages, locales, PROMPT_MAXIMUM_TOKENS);
+  const prompt = createMultiLocalePrompt(inputMessages, locales, PROMPT_MAXIMUM_TOKENS);
 
   const completion = await sendCompletionRequest(prompt);
 

@@ -2,12 +2,19 @@ import { Messages } from '../messages';
 import { encode, decode } from 'gpt-3-encoder';
 import partialJSONParse from 'partial-json-parser';
 
-export const createPrompt = (
+/**
+ * Returns a prompt requesting that the given messages are translated in to the given
+ * list of locales. The messages are limited by the given number of maximum tokens.
+ */
+export const createMultiLocalePrompt = (
   messages: Messages,
   locales: string[],
-  maxTokens: number,
+  maximumTokens: number,
 ): string => {
-  const tokenLimitedMessages = limitMessagesToMaxTokens(messages, maxTokens);
+  const tokenCappedMessages = capMessagesToMaximumTokens(
+    messages,
+    maximumTokens,
+  );
 
   return `Translate the values in the following JSON in to the following locales: ${locales.join(
     ', ',
@@ -15,33 +22,44 @@ export const createPrompt = (
 - Translations must adhere to the Vue I18n message syntax.
 - The response should be JSON where each locale is a root key.
 
-${JSON.stringify(tokenLimitedMessages)}`;
+${JSON.stringify(tokenCappedMessages)}`;
 };
 
+/**
+ * Returns a prompt requesting that the given messages are translated in to the given
+ * locale. The messages are limited by the given number of maximum tokens.
+ */
 export const createSingeLocalePrompt = (
   messages: Messages,
   locale: string,
-  maxTokens: number,
+  maximumTokens: number,
 ): string => {
-  const tokenLimitedMessages = limitMessagesToMaxTokens(messages, maxTokens);
+  const tokenCappedMessages = capMessagesToMaximumTokens(
+    messages,
+    maximumTokens,
+  );
 
   return `Translate the values in the following JSON in to the following locale: ${locale}. The following rules must be followed:
 - Translations must adhere to the Vue I18n message syntax.
 
-${JSON.stringify(tokenLimitedMessages)}`;
+${JSON.stringify(tokenCappedMessages)}`;
 };
 
-const limitMessagesToMaxTokens = (
+/**
+ * Caps the given messages to the largest number of complete key/value pairs that
+ * can fit within the given number of maximum tokens.
+ */
+const capMessagesToMaximumTokens = (
   messages: Messages,
-  maxTokens: number,
+  maximumTokens: number,
 ): Messages => {
   const messagesText = JSON.stringify(messages);
 
   const messagesTokens = encode(messagesText);
 
-  const cappedMessagesTokens = messagesTokens.slice(0, maxTokens);
+  const tokenCappedMessages = messagesTokens.slice(0, maximumTokens);
 
-  const cappedMessagesText = decode(cappedMessagesTokens);
+  const tokenCappedMessagesText = decode(tokenCappedMessages);
 
-  return partialJSONParse(cappedMessagesText);
+  return partialJSONParse(tokenCappedMessagesText);
 };
