@@ -7,7 +7,7 @@ import {
   sendCompletionRequest,
 } from './api';
 import { createPrompt, createSingeLocalePrompt } from './prompt';
-import { extractLocaleMappedMessagesFromChoice } from './completion';
+import { convertCompletionToLocaleMappedMessages } from './completion';
 import { LocaleMappedMessages, Messages } from './messages';
 import partialJSONParse from 'partial-json-parser';
 
@@ -42,9 +42,8 @@ const main = async (): Promise<void> => {
 
   const completion = await sendCompletionRequest(prompt);
 
-  const localeMappedMessages = extractLocaleMappedMessagesFromChoice(
+  const localeMappedMessages = convertCompletionToLocaleMappedMessages(
     completion,
-    locales,
   );
 
   log(
@@ -72,7 +71,8 @@ const main = async (): Promise<void> => {
   const missingMessagesPerLocale: Record<string, string[]> = {};
   const translatedMessagesPerLocale: LocaleMappedMessages = {};
 
-  for (const [locale, messages] of Object.entries(localeMappedMessages)) {
+  for (const locale of locales) {
+    const messages = localeMappedMessages[locale] ?? {};
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     while (
       (missingMessagesPerLocale[locale] ?? []).length !== 0 ||

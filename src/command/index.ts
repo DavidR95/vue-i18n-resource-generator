@@ -17,7 +17,7 @@ export const command = createCommand()
   )
   .requiredOption(
     '-l, --locales <locales...>',
-    'The list of locales you would like to translate your input messages in to.',
+    'The list of locales you would like to translate your Vue I18n messages in to. One JSON file will be generated per locale.',
   )
   .helpOption('-h, --help', 'Displays help information.')
   .showHelpAfterError('(add --help for additional information)')

@@ -1,24 +1,20 @@
 import { CreateCompletionResponseChoicesInner } from 'openai';
 import { LocaleMappedMessages } from '../messages';
 import partialJSONParse from 'partial-json-parser';
+import chalk from 'chalk';
 
-export const extractLocaleMappedMessagesFromChoice = (
-  choice: CreateCompletionResponseChoicesInner,
-  locales: string[],
+export const convertCompletionToLocaleMappedMessages = (
+  completion: CreateCompletionResponseChoicesInner,
 ): LocaleMappedMessages => {
-  const { text } = choice;
+  const { text } = completion;
 
   if (!text) {
-    throw new Error('');
+    console.log(
+      chalk.magenta('Could not find any text within the completion.'),
+    );
+
+    process.exit(1);
   }
 
-  const parsedText = partialJSONParse<LocaleMappedMessages>(text);
-
-  return locales.reduce<LocaleMappedMessages>(
-    (localeMappedMessages, locale) => {
-      localeMappedMessages[locale] = parsedText[locale] ?? {};
-      return localeMappedMessages;
-    },
-    {},
-  );
+  return partialJSONParse(text);
 };
