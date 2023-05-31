@@ -1,7 +1,11 @@
 import chalk from 'chalk';
 import { command } from './command';
 import { readInput, writeOutput } from './io';
-import { PROMPT_MAXIMUM_TOKENS, initializeClient, sendCompletionRequest } from './api';
+import {
+  PROMPT_MAXIMUM_TOKENS,
+  initializeClient,
+  sendCompletionRequest,
+} from './api';
 import { createPrompt, createSingeLocalePrompt } from './prompt';
 import { extractLocaleMappedMessagesFromChoice } from './completion';
 import { LocaleMappedMessages, Messages } from './messages';
@@ -70,7 +74,10 @@ const main = async (): Promise<void> => {
 
   for (const [locale, messages] of Object.entries(localeMappedMessages)) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    while ((missingMessagesPerLocale[locale] ?? []).length !== 0 || Object.keys(translatedMessagesPerLocale[locale] ?? []).length === 0) {
+    while (
+      (missingMessagesPerLocale[locale] ?? []).length !== 0 ||
+      Object.keys(translatedMessagesPerLocale[locale] ?? []).length === 0
+    ) {
       for (const [messageKey, messageValue] of Object.entries(messages)) {
         if (!translatedMessagesPerLocale[locale]) {
           translatedMessagesPerLocale[locale] = {};
