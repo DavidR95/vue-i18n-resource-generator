@@ -12,7 +12,10 @@ import {
  */
 const OVERALL_MAXIMUM_TOKENS = 4096;
 
-export const PROMPT_MAXIMUM_TOKENS = OVERALL_MAXIMUM_TOKENS / 2;
+/**
+ * We'll subtract some tokens from the prompt to account for lead-in text.
+ */
+export const PROMPT_MAXIMUM_TOKENS = OVERALL_MAXIMUM_TOKENS / 2 - 300;
 const COMPLETION_MAXIMUM_TOKENS = OVERALL_MAXIMUM_TOKENS / 2;
 
 /**

@@ -16,11 +16,13 @@ export const createMultiLocalePrompt = (
     maximumTokens,
   );
 
-  return `Translate the values in the following JSON in to the following locales: ${locales.join(
+  return `Translate only the values in the following JSON in to the following locales: ${locales.join(
     ', ',
   )}. The following rules must be followed:
+- The response must be JSON.
+- The response JSON should use each locale as a root key.
+- The keys of the original JSON must not be changed.
 - Translations must adhere to the Vue I18n message syntax.
-- The response should be JSON where each locale is a root key.
 
 ${JSON.stringify(tokenCappedMessages)}`;
 };
@@ -39,7 +41,9 @@ export const createSingeLocalePrompt = (
     maximumTokens,
   );
 
-  return `Translate the values in the following JSON in to the following locale: ${locale}. The following rules must be followed:
+  return `Translate only the values in the following JSON in to the following locale: ${locale}. The following rules must be followed:
+- The response must be JSON.
+- The keys of the response JSON must be the same as the original.
 - Translations must adhere to the Vue I18n message syntax.
 
 ${JSON.stringify(tokenCappedMessages)}`;
