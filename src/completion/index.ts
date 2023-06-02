@@ -1,11 +1,10 @@
 import { CreateCompletionResponseChoicesInner } from 'openai';
-import { LocaleMappedMessages } from '../messages';
 import partialJSONParse from 'partial-json-parser';
 import chalk from 'chalk';
 
-export const convertCompletionToLocaleMappedMessages = (
+export const parseCompletion = (
   completion: CreateCompletionResponseChoicesInner,
-): LocaleMappedMessages => {
+): object => {
   const { text } = completion;
 
   if (!text) {
