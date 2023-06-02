@@ -122,14 +122,6 @@ const handleLengthFinishReason = async (
         messages[messageKey] = messageValue;
       }
 
-      console.log(
-        chalk.magenta(
-          `For ${locale}, we so far we have the following translated messages ${JSON.stringify(
-            messages,
-          )}\n`,
-        ),
-      );
-
       missingMessageKeys = Object.keys(inputMessages).filter(
         (messageKey) => !Object.keys(messages).includes(messageKey),
       );
