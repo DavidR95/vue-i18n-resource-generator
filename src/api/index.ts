@@ -5,18 +5,21 @@ import {
   OpenAIApi,
 } from 'openai';
 
+const MODEL = 'text-davinci-003';
+
 /**
- * The maximum number of tokens for the combined prompt and completion
- * using the model 'text-davinci-003'. Taken from
- * https://platform.openai.com/docs/models/gpt-3-5.
+ * The maximum number of tokens in the combined prompt and completion
+ * allowed for `MODEL`.
+ *
+ * See https://platform.openai.com/docs/models/gpt-3-5.
  */
-const OVERALL_MAXIMUM_TOKENS = 4096;
+const MODEL_MAXIMUM_TOKENS = 4096;
 
 /**
  * We'll subtract some tokens from the prompt to account for lead-in text.
  */
-export const PROMPT_MAXIMUM_TOKENS = OVERALL_MAXIMUM_TOKENS / 2 - 300;
-const COMPLETION_MAXIMUM_TOKENS = OVERALL_MAXIMUM_TOKENS / 2;
+export const PROMPT_MAXIMUM_TOKENS = MODEL_MAXIMUM_TOKENS / 2 - 300;
+const COMPLETION_MAXIMUM_TOKENS = MODEL_MAXIMUM_TOKENS / 2;
 
 /**
  * Use a temperature of 0 to ensure the response is reliably deterministic.
@@ -65,11 +68,11 @@ export const sendCompletionRequest = async (
 
   try {
     const { data } = await client.createCompletion({
-      model: 'text-davinci-003',
-      prompt,
+      model: MODEL,
       temperature: TEMPERATURE,
       max_tokens: COMPLETION_MAXIMUM_TOKENS,
       n: NUMBER_OF_COMPLETIONS,
+      prompt,
     });
 
     const completion = data.choices[0];
