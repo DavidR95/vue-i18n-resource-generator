@@ -1,6 +1,6 @@
 {
-  "name": "vue-i18n-translation-generator",
-  "description": "A CLI tool that utilizes the OpenAI API to automatically generate static Vue I18n translation files.",
+  "name": "vue-i18n-resource-generator",
+  "description": "A CLI tool that utilizes the OpenAI API to automatically generate static Vue I18n resources.",
   "version": "1.0.0",
   "keywords": [
     "Vue",
