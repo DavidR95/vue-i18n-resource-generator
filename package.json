@@ -1,7 +1,7 @@
 {
   "name": "vue-i18n-resource-generator",
   "description": "A CLI tool that utilizes the OpenAI API to automatically generate static Vue I18n resources.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "keywords": [
     "Vue",
     "OpenAI",
