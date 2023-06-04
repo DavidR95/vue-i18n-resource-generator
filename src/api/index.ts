@@ -16,9 +16,11 @@ const MODEL = 'text-davinci-003';
 const MODEL_MAXIMUM_TOKENS = 4096;
 
 /**
- * We'll subtract some tokens from the prompt to account for lead-in text.
+ * Even with the lead-in text of the prompt, we can't predict whether the
+ * prompt or the completion will use more tokens. Consequently, we'll
+ * just evenly divide the token share.
  */
-export const PROMPT_MAXIMUM_TOKENS = MODEL_MAXIMUM_TOKENS / 2 - 300;
+export const PROMPT_MAXIMUM_TOKENS = MODEL_MAXIMUM_TOKENS / 2;
 const COMPLETION_MAXIMUM_TOKENS = MODEL_MAXIMUM_TOKENS / 2;
 
 /**
@@ -27,10 +29,9 @@ const COMPLETION_MAXIMUM_TOKENS = MODEL_MAXIMUM_TOKENS / 2;
 const TEMPERATURE = 0;
 
 /**
- * Only generate 1 completion for each prompt. We expect the result to be
- * deterministic anyway.
+ * Only generate 1 completion for each prompt.
  */
-const NUMBER_OF_COMPLETIONS = 1;
+const NUMBER_OF_COMPLETIONS_PER_PROMPT = 1;
 
 /**
  * The number of end-characters to display of the user's OpenAI key when
@@ -71,7 +72,7 @@ export const sendCompletionRequest = async (
       model: MODEL,
       temperature: TEMPERATURE,
       max_tokens: COMPLETION_MAXIMUM_TOKENS,
-      n: NUMBER_OF_COMPLETIONS,
+      n: NUMBER_OF_COMPLETIONS_PER_PROMPT,
       prompt,
     });
 
