@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import chalk from 'chalk';
 import { command } from './command';
 import { readInput, writeOutput } from './io';
