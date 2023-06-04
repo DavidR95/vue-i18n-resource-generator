@@ -1,7 +1,7 @@
 {
   "name": "vue-i18n-resource-generator",
   "description": "A CLI tool that utilizes the OpenAI API to automatically generate static Vue I18n resources.",
-  "version": "0.0.3",
+  "version": "0.0.3a",
   "keywords": [
     "Vue",
     "OpenAI",
@@ -29,6 +29,7 @@
     "prepublishOnly": "npm run typecheck && npm run lint"
   },
   "dependencies": {
+    "@commander-js/extra-typings": "^10.0.3",
     "chalk": "^4.1.2",
     "commander": "^10.0.1",
     "gpt-3-encoder": "^1.1.4",
@@ -36,7 +37,6 @@
     "partial-json-parser": "^1.2.2"
   },
   "devDependencies": {
-    "@commander-js/extra-typings": "^10.0.3",
     "@tsconfig/strictest": "^2.0.1",
     "@typescript-eslint/eslint-plugin": "^5.59.7",
     "@typescript-eslint/parser": "^5.59.7",
