@@ -1,7 +1,7 @@
 {
   "name": "vue-i18n-resource-generator",
   "description": "A CLI tool that utilizes the OpenAI API to automatically generate static Vue I18n resources.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "keywords": [
     "Vue",
     "OpenAI",
@@ -16,7 +16,7 @@
   ],
   "homepage": "https://github.com/DavidR95/vue-i18n-resource-generator#readme",
   "license": "ISC",
-  "main": "dist/src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
@@ -28,18 +28,20 @@
     "prepare": "npm run build",
     "prepublishOnly": "npm run typecheck && npm run lint"
   },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^10.0.1",
+    "gpt-3-encoder": "^1.1.4",
+    "openai": "^3.2.1",
+    "partial-json-parser": "^1.2.2"
+  },
   "devDependencies": {
     "@commander-js/extra-typings": "^10.0.3",
     "@tsconfig/strictest": "^2.0.1",
     "@typescript-eslint/eslint-plugin": "^5.59.7",
     "@typescript-eslint/parser": "^5.59.7",
-    "chalk": "^4.1.2",
-    "commander": "^10.0.1",
     "eslint": "^8.41.0",
     "eslint-config-prettier": "^8.8.0",
-    "gpt-3-encoder": "^1.1.4",
-    "openai": "^3.2.1",
-    "partial-json-parser": "^1.2.2",
     "prettier": "^2.8.8",
     "rimraf": "^5.0.1",
     "ts-node": "^10.9.1",
