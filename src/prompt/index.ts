@@ -1,58 +1,39 @@
+import { PROMPT_MAXIMUM_TOKENS } from '../api';
 import { Messages } from '../messages';
 import { encode, decode } from 'gpt-3-encoder';
+import partialJSONParse from 'partial-json-parser';
 
 /**
  * Returns a prompt requesting that the given messages are translated in to the given
- * list of locales. The messages are limited by the given number of maximum tokens.
+ * locale.
  */
-export const createMultiLocalePrompt = (
-  messages: Messages,
-  locales: string[],
-  maximumTokens: number,
-): string => {
-  const prompt = `Translate only the values in the following JSON string in to the following locales: ${locales.join(
-    ', ',
-  )}. The following rules must be followed:
-- The response must be JSON.
-- The response JSON should use each locale as a root key.
-- The keys of the original JSON must not be changed.
-- Translations must adhere to the Vue I18n message syntax.
+export const createPrompt = (messages: Messages, locale: string): string => {
+  const leadInText = `For the given JSON string below, return the same JSON string where the keys are unchanged but the values are translated in to the locale ${locale}, where the translations adhere to the Vue I18n message syntax`;
 
-${JSON.stringify(messages)}`;
+  const numberOfTokensInLeadInText = encode(leadInText).length;
 
-return capTextByMaximumTokens(prompt, maximumTokens);
+  return `${leadInText}: ${convertMessagesToTokenCappedText(
+    messages,
+    PROMPT_MAXIMUM_TOKENS - numberOfTokensInLeadInText,
+  )}`;
 };
 
 /**
- * Returns a prompt requesting that the given messages are translated in to the given
- * locale. The messages are limited by the given number of maximum tokens.
+ * Returns a text version of the given messages, capped to the largest number of
+ * complete key/value pairs that can fit within the given number of maximum
+ * tokens.
  */
-export const createSingeLocalePrompt = (
+const convertMessagesToTokenCappedText = (
   messages: Messages,
-  locale: string,
   maximumTokens: number,
 ): string => {
-  const prompt = `Translate only the values in the following JSON string in to the following locale: ${locale}. The following rules must be followed:
-- The response must be JSON.
-- The keys of the response JSON must be the same as the original.
-- Translations must adhere to the Vue I18n message syntax.
+  const messagesText = JSON.stringify(messages);
 
-${JSON.stringify(messages)}`;
+  const messagesTokens = encode(messagesText);
 
-  return capTextByMaximumTokens(prompt, maximumTokens);
-};
+  const tokenCappedMessages = messagesTokens.slice(0, maximumTokens);
 
-/**
- * Caps the given messages to the largest number of complete key/value pairs that
- * can fit within the given number of maximum tokens.
- */
-const capTextByMaximumTokens = (
-  text: string,
-  maximumTokens: number,
-): string => {
-  const tokenizedText = encode(text);
+  const tokenCappedMessagesText = decode(tokenCappedMessages);
 
-  const cappedTokenizedText = tokenizedText.slice(0, maximumTokens);
-
-  return decode(cappedTokenizedText);
+  return JSON.stringify(partialJSONParse(tokenCappedMessagesText));
 };

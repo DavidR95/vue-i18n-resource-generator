@@ -1,14 +1,10 @@
 import chalk from 'chalk';
 import { command } from './command';
 import { readInput, writeOutput } from './io';
-import {
-  PROMPT_MAXIMUM_TOKENS,
-  initializeClient,
-  sendCompletionRequest,
-} from './api';
-import { createMultiLocalePrompt, createSingeLocalePrompt } from './prompt';
+import { initializeClient, sendCompletionRequest } from './api';
+import { createPrompt } from './prompt';
 import { parseCompletion } from './completion';
-import { LocaleMappedMessages, Messages } from './messages';
+import { Messages } from './messages';
 
 const main = async (): Promise<void> => {
   const { key, inputPath, outputPath, locales } = command.opts();
@@ -31,72 +27,14 @@ const main = async (): Promise<void> => {
 
   initializeClient(key);
 
-  const multiLocalePrompt = createMultiLocalePrompt(
-    inputMessages,
-    locales,
-    PROMPT_MAXIMUM_TOKENS,
-  );
-
-  const completion = await sendCompletionRequest(multiLocalePrompt);
-
-  const localeMappedMessages = parseCompletion(
-    completion,
-  ) as LocaleMappedMessages;
-
-  if (completion.finish_reason === 'stop') {
-    handleStopFinishReason(localeMappedMessages, outputPath);
-  } else {
-    await handleLengthFinishReason(
-      inputMessages,
-      locales,
-      localeMappedMessages,
-      outputPath,
-    );
-  }
-};
-
-const handleStopFinishReason = (
-  localeMappedMessages: LocaleMappedMessages,
-  outputPath: string,
-): void => {
-  console.log(
-    chalk.magenta(
-      `OpenAI provided a finish reason of 'stop'. Now writing output JSON files to ${outputPath}.`,
-    ),
-  );
-
-  for (const [locale, messages] of Object.entries(localeMappedMessages)) {
-    writeOutput(outputPath, locale, messages);
-  }
-};
-
-const handleLengthFinishReason = async (
-  inputMessages: Messages,
-  locales: string[],
-  localeMappedMessages: LocaleMappedMessages,
-  outputPath: string,
-): Promise<void> => {
   for (const locale of locales) {
-    const messages: Messages = localeMappedMessages[locale] ?? {};
-
-    let missingMessageKeys = Object.keys(inputMessages).filter(
-      (inputMessageKey) => !Object.keys(messages).includes(inputMessageKey),
-    );
+    const messages: Messages = {};
+    let missingMessageKeys = Object.keys(inputMessages);
 
     while (missingMessageKeys.length > 0) {
       console.log(
         chalk.magenta(
-          `For ${locale}, so far we have the following translated messages: ${JSON.stringify(
-            messages,
-            null,
-            2,
-          )}\n`,
-        ),
-      );
-
-      console.log(
-        chalk.magenta(
-          `We are still missing the following translations for following message keys: ${JSON.stringify(
+          `We are still missing translations for the following message keys: ${JSON.stringify(
             missingMessageKeys,
           )}\n`,
         ),
@@ -108,11 +46,7 @@ const handleLengthFinishReason = async (
         ),
       );
 
-      const prompt = createSingeLocalePrompt(
-        missingMessages,
-        locale,
-        PROMPT_MAXIMUM_TOKENS,
-      );
+      const prompt = createPrompt(missingMessages, locale);
 
       const completion = await sendCompletionRequest(prompt);
 
