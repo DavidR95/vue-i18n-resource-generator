@@ -17,7 +17,7 @@ npm install -g vue-i18n-resource-generator
 ## Usage
 
 ```bash
-npx vue-i18n-resource-generator [options]
+vue-i18n-resource-generator [options]
 ```
 
 ### Options
