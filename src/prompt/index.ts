@@ -8,11 +8,13 @@ import partialJSONParse from 'partial-json-parser';
  * locale.
  */
 export const createPrompt = (messages: Messages, locale: string): string => {
-  const leadInText = `For the given JSON string below, return the same JSON string where the keys are unchanged but the values are translated in to the locale ${locale}, where the translations adhere to the Vue I18n message syntax`;
+  const leadInText = `Transform the given JSON string such that the keys are unchanged but the values are translated in to the locale ${locale}, where the translations adhere to the Vue I18n message syntax.
+For example, This JSON string: {"helloWorld":"Hello World","poolCount":"pool | {count} pools","thereArePoolCount":"There are @:poolCount"} would be transformed in to this JSON string using the locale fr-FR: {"helloWorld":"Bonjour le monde","poolCount":"piscine | {count} piscines","thereArePoolCount":"Il y a @:poolCount"}.
+The JSON string to transform is:`;
 
   const numberOfTokensInLeadInText = encode(leadInText).length;
 
-  return `${leadInText}: ${convertMessagesToTokenCappedText(
+  return `${leadInText} ${convertMessagesToTokenCappedText(
     messages,
     PROMPT_MAXIMUM_TOKENS - numberOfTokensInLeadInText,
   )}`;
