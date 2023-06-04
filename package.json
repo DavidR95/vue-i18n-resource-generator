@@ -1,7 +1,7 @@
 {
   "name": "vue-i18n-resource-generator",
   "description": "A CLI tool that utilizes the OpenAI API to automatically generate static Vue I18n resources.",
-  "version": "0.0.3a",
+  "version": "0.0.3b",
   "keywords": [
     "Vue",
     "OpenAI",
@@ -16,7 +16,7 @@
   ],
   "homepage": "https://github.com/DavidR95/vue-i18n-resource-generator#readme",
   "license": "ISC",
-  "main": "dist/index.js",
+  "bin": "./dist/index.js",
   "scripts": {
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
